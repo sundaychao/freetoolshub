@@ -11,6 +11,11 @@ export const siteConfig = {
     client: "ca-pub-XXXXXXXXXXXXXXXX", // AdSense publisher ID（占位，审核通过前留空或占位）
     enabled: false, // 默认关闭，审核通过后改 true
   },
+  // Google Analytics 4：填入 Measurement ID（格式 G-XXXXXXXXXX）后改为 true 启用
+  analytics: {
+    measurementId: "G-XXXXXXXXXX", // GA4 Measurement ID，占位，用户拿到真实 ID 后替换
+    enabled: false, // 默认关闭，拿到真实 ID 后改 true
+  },
   // 社交/联系
   email: "zhou7chao@163.com",
   twitter: "@zhou77chao",
