@@ -13,8 +13,8 @@ export const siteConfig = {
   },
   // Google Analytics 4：填入 Measurement ID（格式 G-XXXXXXXXXX）后改为 true 启用
   analytics: {
-    measurementId: "G-XXXXXXXXXX", // GA4 Measurement ID，占位，用户拿到真实 ID 后替换
-    enabled: false, // 默认关闭，拿到真实 ID 后改 true
+    measurementId: "G-Q0SYFYGFJD", // GA4 Measurement ID
+    enabled: true, // 已启用
   },
   // 社交/联系
   email: "zhou7chao@163.com",
