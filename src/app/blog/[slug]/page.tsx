@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
 import { AdSlot } from "@/components/AdSlot";
 import { getPostBySlug, posts } from "@/lib/posts";
+import { getPostJsonLd } from "@/lib/jsonld";
 
 // 为所有文章预生成静态路由
 export function generateStaticParams() {
@@ -49,8 +50,18 @@ export default async function BlogPostPage({
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
+  const jsonLd = getPostJsonLd(post);
+
   return (
     <Container className="py-12">
+      {/* 文章页结构化数据：Article + BreadcrumbList */}
+      {jsonLd.map((item, idx) => (
+        <script
+          key={idx}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
+        />
+      ))}
       <nav className="text-sm text-zinc-500">
         <Link href="/blog" className="hover:text-primary">
           Blog

@@ -4,6 +4,7 @@ import Script from "next/script";
 import { siteConfig } from "@/site.config";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { getOrganizationJsonLd, getWebSiteJsonLd } from "@/lib/jsonld";
 import "./globals.css";
 
 const inter = Inter({
@@ -50,6 +51,19 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-white text-zinc-900">
+        {/* 站点级结构化数据：Organization + WebSite */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(getOrganizationJsonLd()),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(getWebSiteJsonLd()),
+          }}
+        />
         {/* Google Analytics 4：仅当启用时注入 */}
         {siteConfig.analytics.enabled && (
           <>

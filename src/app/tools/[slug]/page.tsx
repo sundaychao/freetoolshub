@@ -18,6 +18,7 @@ import { TimestampConverter } from "@/components/tools/TimestampConverter";
 import { LoremIpsum } from "@/components/tools/LoremIpsum";
 import { UnitConverter } from "@/components/tools/UnitConverter";
 import { getToolBySlug, implementedTools, tools } from "@/lib/tools";
+import { getToolJsonLd } from "@/lib/jsonld";
 
 // 工具 slug -> 组件 映射表，避免长链 if/else
 const toolComponents: Record<string, React.ComponentType> = {
@@ -68,9 +69,18 @@ export default async function ToolPage({
 
   const isImplemented = implementedTools.has(tool.slug);
   const ToolComponent = isImplemented ? toolComponents[tool.slug] : null;
+  const jsonLd = getToolJsonLd(tool);
 
   return (
     <Container className="py-12">
+      {/* 工具页结构化数据：SoftwareApplication + BreadcrumbList */}
+      {jsonLd.map((item, idx) => (
+        <script
+          key={idx}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
+        />
+      ))}
       <nav className="text-sm text-zinc-500">
         <Link href="/tools" className="hover:text-primary">
           Tools
