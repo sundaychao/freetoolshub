@@ -7,7 +7,7 @@ import { tools } from "@/lib/tools";
 import { posts } from "@/lib/posts";
 
 export default function Home() {
-  const featuredTools = tools.slice(0, 6);
+  const allTools = tools;
   const latestPosts = posts.slice(0, 3);
 
   return (
@@ -15,24 +15,16 @@ export default function Home() {
       {/* 工具区 */}
       <section>
         <Container className="py-12">
-          <div className="flex items-end justify-between">
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight text-zinc-900">
-                Popular Tools
-              </h2>
-              <p className="mt-1 text-sm text-zinc-600">
-                Hand-picked utilities to speed up your daily work.
-              </p>
-            </div>
-            <Link
-              href="/tools"
-              className="hidden text-sm font-medium text-primary hover:text-primary-hover sm:inline"
-            >
-              View all &rarr;
-            </Link>
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight text-zinc-900">
+              All Tools
+            </h2>
+            <p className="mt-1 text-sm text-zinc-600">
+              Free online utilities that run entirely in your browser. No sign-up, no data sent to servers.
+            </p>
           </div>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredTools.map((tool) => (
+            {allTools.map((tool) => (
               <ToolCard key={tool.slug} tool={tool} />
             ))}
           </div>

@@ -3,6 +3,9 @@ import { siteConfig } from "@/site.config";
 import { tools } from "@/lib/tools";
 import { posts } from "@/lib/posts";
 
+// 静态导出兼容：标记为 force-static
+export const dynamic = "force-static";
+
 // 动态 sitemap：列出所有静态路由 + 工具 + 博客
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteConfig.url;

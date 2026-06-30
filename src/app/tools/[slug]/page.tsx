@@ -13,6 +13,10 @@ import { UuidGenerator } from "@/components/tools/UuidGenerator";
 import { HashGenerator } from "@/components/tools/HashGenerator";
 import { TextCaseConverter } from "@/components/tools/TextCaseConverter";
 import { WordCounter } from "@/components/tools/WordCounter";
+import { QrGenerator } from "@/components/tools/QrGenerator";
+import { TimestampConverter } from "@/components/tools/TimestampConverter";
+import { LoremIpsum } from "@/components/tools/LoremIpsum";
+import { UnitConverter } from "@/components/tools/UnitConverter";
 import { getToolBySlug, implementedTools, tools } from "@/lib/tools";
 
 // 工具 slug -> 组件 映射表，避免长链 if/else
@@ -27,6 +31,10 @@ const toolComponents: Record<string, React.ComponentType> = {
   "hash-generator": HashGenerator,
   "case-converter": TextCaseConverter,
   "word-counter": WordCounter,
+  "qr-generator": QrGenerator,
+  "timestamp-converter": TimestampConverter,
+  "lorem-ipsum": LoremIpsum,
+  "unit-converter": UnitConverter,
 };
 
 // 为所有工具预生成静态路由

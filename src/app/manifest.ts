@@ -1,6 +1,9 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/site.config";
 
+// 静态导出兼容：标记为 force-static
+export const dynamic = "force-static";
+
 // PWA manifest：使用 siteConfig 的 name / short_name
 export default function manifest(): MetadataRoute.Manifest {
   return {

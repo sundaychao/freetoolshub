@@ -1,9 +1,9 @@
 // 站点集中配置：用户可在此替换域名、AdSense ID、邮箱等占位符
 
 export const siteConfig = {
-  name: "ToolHub", // 站点名称（占位，用户可改）
-  domain: "example.com", // 用户域名（占位，用户必须替换）
-  url: "https://example.com", // 站点完整 URL
+  name: "FreeToolsHub", // 站点名称
+  domain: "sundaychao.com", // 用户真实域名
+  url: "https://sundaychao.com", // 站点完整 URL（HTTPS，配 GitHub Pages + 自定义域名后启用）
   description: "Free online tools and articles for developers and creators.",
   locale: "en_US",
   // Google AdSense

@@ -89,6 +89,38 @@ export const tools: Tool[] = [
     category: "Text",
     icon: "W",
   },
+  {
+    slug: "qr-generator",
+    title: "QR Code Generator",
+    description:
+      "Create custom QR codes for URLs, text, contacts and more. Download as PNG or SVG instantly.",
+    category: "Web",
+    icon: "QR",
+  },
+  {
+    slug: "timestamp-converter",
+    title: "Unix Timestamp Converter",
+    description:
+      "Convert between Unix timestamps and human-readable dates. Supports seconds and milliseconds, any timezone.",
+    category: "Data",
+    icon: "TS",
+  },
+  {
+    slug: "lorem-ipsum",
+    title: "Lorem Ipsum Generator",
+    description:
+      "Generate placeholder text in Lorem Ipsum style. Choose paragraph count, sentence length and output as plain text or HTML.",
+    category: "Text",
+    icon: "L§",
+  },
+  {
+    slug: "unit-converter",
+    title: "Unit Converter",
+    description:
+      "Convert between length, weight, temperature and data units. Metric to imperial and more, all instant.",
+    category: "Data",
+    icon: "↔",
+  },
 ];
 
 // 标记为“已实现”的工具 slug 集合，用于在工具详情页决定渲染真实交互组件
@@ -103,6 +135,10 @@ export const implementedTools = new Set<string>([
   "hash-generator",
   "case-converter",
   "word-counter",
+  "qr-generator",
+  "timestamp-converter",
+  "lorem-ipsum",
+  "unit-converter",
 ]);
 
 export function getToolBySlug(slug: string): Tool | undefined {
