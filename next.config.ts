@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  // 以目录形式输出（about/index.html 而非 about.html）
+  // 确保 GitHub Pages 对所有路径都能正确返回页面，避免 Google 爬虫遇到 404
+  trailingSlash: true,
   // GitHub Pages 仓库路径为根域名，无需 basePath
   // 如果部署到 https://username.github.io/freetoolshub/ 则需设置 basePath: "/freetoolshub"
   // 你使用自定义域名 sundaychao.com，所以不需要 basePath
