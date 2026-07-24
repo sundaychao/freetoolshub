@@ -42,8 +42,20 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-10 border-t border-zinc-200 pt-6 text-sm text-zinc-500">
-          &copy; {year} {siteConfig.name}. All rights reserved.
+        <div className="mt-10 flex flex-col gap-2 border-t border-zinc-200 pt-6 text-sm text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
+          <span>
+            &copy; {year} {siteConfig.name}. All rights reserved.
+          </span>
+          {siteConfig.icp.number && (
+            <a
+              href={siteConfig.icp.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-500 transition-colors hover:text-primary"
+            >
+              {siteConfig.icp.number}
+            </a>
+          )}
         </div>
       </Container>
     </footer>

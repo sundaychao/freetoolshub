@@ -67,6 +67,10 @@ export default function Home() {
       <Container className="py-10">
         <AdSlot slot="home-bottom" />
       </Container>
+
+      <div hidden>
+        Impact-Site-Verification: 6b20d6d2-af7d-4ead-9d35-57e9e580efee
+      </div>
     </>
   );
 }
