@@ -10,27 +10,28 @@ export const dynamic = "force-static";
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteConfig.url;
   const now = new Date();
+  const pageUrl = (path: string) => `${base}${path}`;
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${base}/`, lastModified: now, changeFrequency: "weekly", priority: 1 },
-    { url: `${base}/tools`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${base}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${base}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${base}/contact`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${base}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${base}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${base}/cookie`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    { url: pageUrl("/tools/"), lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: pageUrl("/blog/"), lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { url: pageUrl("/about/"), lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: pageUrl("/contact/"), lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: pageUrl("/privacy/"), lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    { url: pageUrl("/terms/"), lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    { url: pageUrl("/cookie/"), lastModified: now, changeFrequency: "yearly", priority: 0.3 },
   ];
 
   const toolRoutes: MetadataRoute.Sitemap = tools.map((tool) => ({
-    url: `${base}/tools/${tool.slug}`,
+    url: pageUrl(`/tools/${tool.slug}/`),
     lastModified: now,
     changeFrequency: "monthly",
     priority: 0.7,
   }));
 
   const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${base}/blog/${post.slug}`,
+    url: pageUrl(`/blog/${post.slug}/`),
     lastModified: new Date(post.date),
     changeFrequency: "monthly",
     priority: 0.6,

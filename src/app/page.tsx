@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/Container";
 import { AdSlot } from "@/components/AdSlot";
@@ -5,6 +6,12 @@ import { ToolCard } from "@/components/ToolCard";
 import { PostCard } from "@/components/PostCard";
 import { tools } from "@/lib/tools";
 import { posts } from "@/lib/posts";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default function Home() {
   const allTools = tools;

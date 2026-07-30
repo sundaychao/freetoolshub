@@ -7,6 +7,9 @@ import { AdSlot } from "@/components/AdSlot";
 export const metadata: Metadata = {
   title: "About",
   description: `Learn more about ${siteConfig.name} and what we build.`,
+  alternates: {
+    canonical: "/about/",
+  },
 };
 
 export default function AboutPage() {

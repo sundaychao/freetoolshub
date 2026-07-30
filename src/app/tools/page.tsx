@@ -7,6 +7,9 @@ import { tools } from "@/lib/tools";
 export const metadata: Metadata = {
   title: "Tools",
   description: "Browse all free online tools available on the site.",
+  alternates: {
+    canonical: "/tools/",
+  },
 };
 
 export default function ToolsPage() {

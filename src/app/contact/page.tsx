@@ -6,6 +6,9 @@ import { AdSlot } from "@/components/AdSlot";
 export const metadata: Metadata = {
   title: "Contact",
   description: `Get in touch with the ${siteConfig.name} team.`,
+  alternates: {
+    canonical: "/contact/",
+  },
 };
 
 const contactParagraphs = [

@@ -2,6 +2,8 @@ import { siteConfig } from "@/site.config";
 import type { Tool } from "@/lib/tools";
 import type { Post } from "@/lib/posts";
 
+const pageUrl = (path: string) => `${siteConfig.url}${path}`;
+
 // 站点级 JSON-LD：Organization + WebSite
 // 帮助 Google 理解站点整体信息，提升品牌知识面板正确率
 export function getOrganizationJsonLd() {
@@ -43,13 +45,14 @@ export function getWebSiteJsonLd() {
 // 让 Google 在搜索结果中显示工具富结果（评分、价格等占位）
 export function getToolJsonLd(tool: Tool) {
   const base = siteConfig.url;
+  const toolUrl = pageUrl(`/tools/${tool.slug}/`);
   return [
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       name: tool.title,
       description: tool.description,
-      url: `${base}/tools/${tool.slug}`,
+      url: toolUrl,
       applicationCategory: "WebApplication",
       operatingSystem: "Any (Web Browser)",
       offers: {
@@ -77,13 +80,13 @@ export function getToolJsonLd(tool: Tool) {
           "@type": "ListItem",
           position: 2,
           name: "Tools",
-          item: `${base}/tools`,
+          item: pageUrl("/tools/"),
         },
         {
           "@type": "ListItem",
           position: 3,
           name: tool.title,
-          item: `${base}/tools/${tool.slug}`,
+          item: toolUrl,
         },
       ],
     },
@@ -94,7 +97,7 @@ export function getToolJsonLd(tool: Tool) {
 // 帮助 Google 识别文章作者、发布时间，可能显示在新闻/文章富结果中
 export function getPostJsonLd(post: Post) {
   const base = siteConfig.url;
-  const url = `${base}/blog/${post.slug}`;
+  const url = pageUrl(`/blog/${post.slug}/`);
   return [
     {
       "@context": "https://schema.org",
@@ -134,7 +137,7 @@ export function getPostJsonLd(post: Post) {
           "@type": "ListItem",
           position: 2,
           name: "Blog",
-          item: `${base}/blog`,
+          item: pageUrl("/blog/"),
         },
         {
           "@type": "ListItem",

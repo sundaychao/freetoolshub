@@ -55,6 +55,9 @@ export async function generateMetadata({
   return {
     title: tool.title,
     description: tool.description,
+    alternates: {
+      canonical: `/tools/${tool.slug}/`,
+    },
   };
 }
 

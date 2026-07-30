@@ -6,6 +6,9 @@ import { AdSlot } from "@/components/AdSlot";
 export const metadata: Metadata = {
   title: "Cookie Policy",
   description: `Cookie Policy for ${siteConfig.name}.`,
+  alternates: {
+    canonical: "/cookie/",
+  },
 };
 
 type Section = {

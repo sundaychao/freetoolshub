@@ -6,6 +6,9 @@ import { AdSlot } from "@/components/AdSlot";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: `Privacy Policy for ${siteConfig.name}.`,
+  alternates: {
+    canonical: "/privacy/",
+  },
 };
 
 type Section = {
