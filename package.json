@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "verify:seo-tools": "node --experimental-strip-types scripts/verify-seo-tool-utils.ts"
+    "verify:seo-tools": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types scripts/verify-seo-tool-utils.ts"
   },
   "dependencies": {
     "next": "16.2.9",
