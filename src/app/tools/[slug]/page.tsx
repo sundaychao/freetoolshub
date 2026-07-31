@@ -21,6 +21,10 @@ import { JwtDecoder } from "@/components/tools/JwtDecoder";
 import { RegexTester } from "@/components/tools/RegexTester";
 import { TextDiffChecker } from "@/components/tools/TextDiffChecker";
 import { HtmlEntityEncoder } from "@/components/tools/HtmlEntityEncoder";
+import { CsvToJsonConverter } from "@/components/tools/CsvToJsonConverter";
+import { JsonToCsvConverter } from "@/components/tools/JsonToCsvConverter";
+import { YamlToJsonConverter } from "@/components/tools/YamlToJsonConverter";
+import { JsonToTypescriptConverter } from "@/components/tools/JsonToTypescriptConverter";
 import { getToolBySlug, implementedTools, tools } from "@/lib/tools";
 import { getToolJsonLd } from "@/lib/jsonld";
 
@@ -44,6 +48,10 @@ const toolComponents: Record<string, React.ComponentType> = {
   "regex-tester": RegexTester,
   "text-diff-checker": TextDiffChecker,
   "html-entity-encoder": HtmlEntityEncoder,
+  "csv-to-json": CsvToJsonConverter,
+  "json-to-csv": JsonToCsvConverter,
+  "yaml-to-json": YamlToJsonConverter,
+  "json-to-typescript": JsonToTypescriptConverter,
 };
 
 // 为所有工具预生成静态路由

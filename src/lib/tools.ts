@@ -153,6 +153,34 @@ export const tools: Tool[] = [
     category: "Web",
     icon: "&;",
   },
+  {
+    slug: "csv-to-json",
+    title: "CSV to JSON Converter",
+    description: "Convert CSV data to formatted JSON locally in your browser without uploading your files.",
+    category: "Data",
+    icon: "CSV",
+  },
+  {
+    slug: "json-to-csv",
+    title: "JSON to CSV Converter",
+    description: "Convert JSON arrays to CSV locally in your browser without sending data to a server.",
+    category: "Data",
+    icon: "JSON",
+  },
+  {
+    slug: "yaml-to-json",
+    title: "YAML to JSON Converter",
+    description: "Convert simple YAML to formatted JSON locally in your browser with private, client-side processing.",
+    category: "Data",
+    icon: "YAML",
+  },
+  {
+    slug: "json-to-typescript",
+    title: "JSON to TypeScript Converter",
+    description: "Generate TypeScript types from JSON locally in your browser without sending your data anywhere.",
+    category: "Web",
+    icon: "TS",
+  },
 ];
 
 // 标记为“已实现”的工具 slug 集合，用于在工具详情页决定渲染真实交互组件
@@ -175,6 +203,10 @@ export const implementedTools = new Set<string>([
   "regex-tester",
   "text-diff-checker",
   "html-entity-encoder",
+  "csv-to-json",
+  "json-to-csv",
+  "yaml-to-json",
+  "json-to-typescript",
 ]);
 
 export function getToolBySlug(slug: string): Tool | undefined {
