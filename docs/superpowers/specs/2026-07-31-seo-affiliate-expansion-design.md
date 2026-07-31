@@ -41,7 +41,7 @@ CSV to JSON Converter will parse a header row and convert rows into JSON objects
 
 JSON to CSV Converter will accept an array of objects and convert it to CSV with escaped quotes and commas.
 
-YAML to JSON Converter will support a practical subset of YAML suitable for common configuration snippets: indentation-based objects, lists, strings, booleans, nulls, and numbers. It will not claim full YAML 1.2 compliance.
+YAML to JSON Converter will support a practical subset of YAML suitable for quick snippets: top-level key/value objects, simple scalar lists, strings, booleans, nulls, and numbers. It will explicitly state that nested and indentation-based YAML are outside this first batch.
 
 JSON to TypeScript Converter will infer TypeScript interfaces from JSON objects and arrays using conservative union types where needed.
 
