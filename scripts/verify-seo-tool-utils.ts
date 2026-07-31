@@ -49,6 +49,10 @@ assert.equal(decodeHtmlEntities("&lt;strong&gt;Hi&lt;/strong&gt;"), "<strong>Hi<
 
 assert.equal(minifyCss("/*x*/\n.card { color: red; }"), ".card{color:red}");
 assert.equal(minifyJavaScript("// x\nconst a = 1;"), "const a = 1;");
+const asiSensitiveJavaScript = minifyJavaScript("function f(){ return\n1; }");
+assert.equal(/return\s*\n\s*1/.test(asiSensitiveJavaScript), true);
+assert.equal(asiSensitiveJavaScript.includes("return 1"), false);
+assert.equal(minifyJavaScript("const slash = /[//]/;"), "const slash = /[//]/;");
 assert.equal(contrastRatio("#000000", "#ffffff"), 21);
 assert.equal(
   generateRobotsTxt({

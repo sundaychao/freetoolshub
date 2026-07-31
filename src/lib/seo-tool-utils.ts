@@ -242,7 +242,83 @@ export function minifyCss(input: string): string {
 }
 
 export function minifyJavaScript(input: string): string {
-  return compactWhitespace(stripComments(input, true), false);
+  let output = "";
+
+  for (let index = 0; index < input.length; index += 1) {
+    const character = input[index];
+    const nextCharacter = input[index + 1];
+
+    if (character === "\"" || character === "'" || character === "`") {
+      const end = readJavaScriptString(input, index, character);
+      output += input.slice(index, end);
+      index = end - 1;
+      continue;
+    }
+
+    if (character === "/" && nextCharacter === "/") {
+      const end = input.indexOf("\n", index + 2);
+      if (end === -1) break;
+      output += "\n";
+      index = end;
+      continue;
+    }
+
+    if (character === "/" && nextCharacter === "*") {
+      const end = input.indexOf("*/", index + 2);
+      const commentEnd = end === -1 ? input.length : end + 2;
+      const comment = input.slice(index, commentEnd);
+      output += comment.replace(/[^\r\n]/g, " ");
+      index = commentEnd - 1;
+      continue;
+    }
+
+    // Treat every non-comment slash as a regex candidate. When its context is
+    // ambiguous with division, preserving too much is safer than stripping a
+    // comment-looking sequence inside a regular expression.
+    if (character === "/") {
+      const end = readJavaScriptRegex(input, index);
+      output += input.slice(index, end);
+      index = end - 1;
+      continue;
+    }
+
+    output += character;
+  }
+
+  return output.trim();
+}
+
+function readJavaScriptString(input: string, start: number, quote: string): number {
+  let index = start + 1;
+  while (index < input.length) {
+    if (input[index] === "\\") index += 2;
+    else if (input[index++] === quote) break;
+  }
+  return index;
+}
+
+function readJavaScriptRegex(input: string, start: number): number {
+  let inCharacterClass = false;
+  let index = start + 1;
+  while (index < input.length) {
+    const character = input[index];
+    if (character === "\\") {
+      index += 2;
+    } else if (character === "[") {
+      inCharacterClass = true;
+      index += 1;
+    } else if (character === "]") {
+      inCharacterClass = false;
+      index += 1;
+    } else if (character === "/" && !inCharacterClass) {
+      index += 1;
+      while (/[A-Za-z]/.test(input[index] ?? "")) index += 1;
+      return index;
+    } else {
+      index += 1;
+    }
+  }
+  return input.length;
 }
 
 function compactWhitespace(input: string, removeAroundPunctuation: boolean): string {
