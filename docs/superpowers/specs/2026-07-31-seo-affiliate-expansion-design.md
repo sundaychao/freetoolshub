@@ -23,7 +23,7 @@ The following tools will be added as implemented tools:
 - JSON to TypeScript Converter
 - HTML Entity Encoder / Decoder
 - CSS Minifier
-- JavaScript Minifier
+- JavaScript Comment & Whitespace Cleaner
 - Color Contrast Checker
 - Robots.txt Generator
 
@@ -49,7 +49,7 @@ HTML Entity Encoder / Decoder will encode reserved HTML characters and decode co
 
 CSS Minifier will remove comments and unnecessary whitespace while preserving basic CSS syntax.
 
-JavaScript Minifier will provide a lightweight whitespace/comment minifier. It will be positioned as a quick utility, not a production-grade replacement for Terser or esbuild.
+JavaScript Comment & Whitespace Cleaner will provide a conservative cleanup utility for comments and obvious whitespace. It will be positioned as a quick readability/cleanup tool, not a production-grade JavaScript minifier and not a replacement for Terser, esbuild, SWC, or a JavaScript parser.
 
 Color Contrast Checker will compute WCAG contrast ratio and show AA/AAA pass status for normal and large text.
 
@@ -68,7 +68,7 @@ Add 20 English posts aligned with the new tools and affiliate-friendly topics:
 - How to Generate TypeScript Types from JSON API Responses
 - HTML Entities Explained: Escaping Text Safely for the Web
 - Why Minifying CSS Still Matters for Fast Websites
-- JavaScript Minification: What It Does and When to Use It
+- JavaScript Cleanup: Comments, Whitespace, and Safe Limits
 - Color Contrast and Accessibility: A Practical WCAG Guide
 - Robots.txt for Small Websites: What to Allow and Block
 - Sitemaps and Robots.txt: How They Work Together for SEO

@@ -34,7 +34,7 @@
 - Create `src/components/tools/JsonToTypescriptConverter.tsx`
 - Create `src/components/tools/HtmlEntityEncoder.tsx`
 - Create `src/components/tools/CssMinifier.tsx`
-- Create `src/components/tools/JavaScriptMinifier.tsx`
+- Create `src/components/tools/JavaScriptCleaner.tsx`
 - Create `src/components/tools/ColorContrastChecker.tsx`
 - Create `src/components/tools/RobotsTxtGenerator.tsx`
 - Modify `src/lib/tools.ts`: add 12 tool metadata entries and include them in `implementedTools`.
@@ -61,7 +61,7 @@
 - Produces: `encodeHtmlEntities(input: string): string`
 - Produces: `decodeHtmlEntities(input: string): string`
 - Produces: `minifyCss(input: string): string`
-- Produces: `minifyJavaScript(input: string): string`
+- Produces: `cleanJavaScript(input: string): string`
 - Produces: `contrastRatio(foreground: string, background: string): number`
 - Produces: `generateRobotsTxt(options: RobotsOptions): string`
 
@@ -82,7 +82,7 @@ import {
   jsonToCsv,
   jsonToTypescript,
   minifyCss,
-  minifyJavaScript,
+  cleanJavaScript,
   simpleYamlToJson,
   testRegex,
 } from "../src/lib/seo-tool-utils.ts";
@@ -120,7 +120,7 @@ assert.equal(encodeHtmlEntities('<a href="x">'), "&lt;a href=&quot;x&quot;&gt;")
 assert.equal(decodeHtmlEntities("&lt;strong&gt;Hi&lt;/strong&gt;"), "<strong>Hi</strong>");
 
 assert.equal(minifyCss("/*x*/\n.card { color: red; }"), ".card{color:red}");
-assert.equal(minifyJavaScript("// x\nconst a = 1;"), "const a = 1;");
+assert.equal(cleanJavaScript("// x\nconst a = 1;"), "const a = 1;");
 assert.equal(contrastRatio("#000000", "#ffffff"), 21);
 assert.equal(
   generateRobotsTxt({
@@ -176,7 +176,8 @@ Implementation requirements:
 - CSV parser must handle quoted fields, escaped quotes, CRLF, commas inside quotes, and blank trailing lines.
 - YAML parser must support simple top-level objects and simple lists; it must throw `Error` for unsupported indentation.
 - TypeScript generator must sanitize property names that are not valid identifiers by quoting them.
-- Minifiers must be conservative and avoid changing string literal contents.
+- CSS minification must be conservative and avoid changing string literal contents.
+- JavaScript cleanup must be explicitly conservative: remove only standalone line comments and obvious block comments when doing so does not require classifying JavaScript regex/division grammar. It must preserve line breaks that may affect automatic semicolon insertion.
 - Contrast ratio must parse 3-digit and 6-digit hex.
 
 - [ ] **Step 4: Add npm verification script**
@@ -388,22 +389,22 @@ git commit -m "feat: add data conversion tools"
 
 **Files:**
 - Create: `src/components/tools/CssMinifier.tsx`
-- Create: `src/components/tools/JavaScriptMinifier.tsx`
+- Create: `src/components/tools/JavaScriptCleaner.tsx`
 - Create: `src/components/tools/ColorContrastChecker.tsx`
 - Create: `src/components/tools/RobotsTxtGenerator.tsx`
 - Modify: `src/lib/tools.ts`
 - Modify: `src/app/tools/[slug]/page.tsx`
 
 **Interfaces:**
-- Consumes: `minifyCss`, `minifyJavaScript`, `contrastRatio`, and `generateRobotsTxt`.
-- Produces: implemented tools registered for slugs `css-minifier`, `javascript-minifier`, `color-contrast-checker`, and `robots-txt-generator`.
+- Consumes: `minifyCss`, `cleanJavaScript`, `contrastRatio`, and `generateRobotsTxt`.
+- Produces: implemented tools registered for slugs `css-minifier`, `javascript-cleaner`, `color-contrast-checker`, and `robots-txt-generator`.
 
 - [ ] **Step 1: Add metadata entries**
 
 Add metadata for:
 
 - `css-minifier`
-- `javascript-minifier`
+- `javascript-cleaner`
 - `color-contrast-checker`
 - `robots-txt-generator`
 
@@ -414,7 +415,7 @@ Categories should be `Web`, `Design`, or `SEO`.
 Required behaviors:
 
 - `CssMinifier`: input CSS -> minified output -> before/after character counts.
-- `JavaScriptMinifier`: input JavaScript -> minified output -> warning that it is a lightweight browser utility, not a bundler.
+- `JavaScriptCleaner`: input JavaScript -> conservative cleaned output -> warning that it is a quick cleanup utility, not a production-grade minifier or bundler.
 - `ColorContrastChecker`: foreground/background hex inputs -> color swatches -> ratio -> WCAG AA/AAA status.
 - `RobotsTxtGenerator`: user-agent input, allow all checkbox, disallow paths textarea, sitemap URL input, host input -> generated robots.txt output.
 
@@ -438,7 +439,7 @@ Expected: pass and routes generated.
 Run:
 
 ```bash
-git add src/components/tools/CssMinifier.tsx src/components/tools/JavaScriptMinifier.tsx src/components/tools/ColorContrastChecker.tsx src/components/tools/RobotsTxtGenerator.tsx src/lib/tools.ts src/app/tools/[slug]/page.tsx
+git add src/components/tools/CssMinifier.tsx src/components/tools/JavaScriptCleaner.tsx src/components/tools/ColorContrastChecker.tsx src/components/tools/RobotsTxtGenerator.tsx src/lib/tools.ts src/app/tools/[slug]/page.tsx
 git commit -m "feat: add minifier contrast and robots tools"
 ```
 
