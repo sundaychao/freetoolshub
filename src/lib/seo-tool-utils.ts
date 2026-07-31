@@ -290,7 +290,7 @@ export function minifyJavaScript(input: string): string {
 }
 
 function isCssIdentifierCharacter(character: string): boolean {
-  return /[A-Za-z0-9_-]/.test(character);
+  return /[A-Za-z0-9_\\-\\\\]/.test(character);
 }
 
 function isJavaScriptRegexStart(input: string, index: number): boolean {
@@ -299,6 +299,8 @@ function isJavaScriptRegexStart(input: string, index: number): boolean {
   if (previous < 0) return true;
 
   const character = input[previous];
+  // A slash after a closing parenthesis can begin a regex statement; preserve ambiguous expressions.
+  if (character === ")") return true;
   if (!/[A-Za-z0-9_$\])]/.test(character)) return true;
   if (!/[A-Za-z_$]/.test(character)) return false;
 
