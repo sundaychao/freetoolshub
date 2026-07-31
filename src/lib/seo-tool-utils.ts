@@ -245,8 +245,9 @@ export function minifyCss(input: string): string {
   return compactWhitespace(stripComments(input, false), true).replace(/;}/g, "}");
 }
 
-export function minifyJavaScript(input: string): string {
+export function cleanJavaScript(input: string): string {
   let output = "";
+  let lineOutputStart = 0;
 
   for (let index = 0; index < input.length; index += 1) {
     const character = input[index];
@@ -259,31 +260,30 @@ export function minifyJavaScript(input: string): string {
       continue;
     }
 
-    if (character === "/" && nextCharacter === "/") {
+    if (character === "/" && nextCharacter === "/" && isStandaloneJavaScriptComment(input, index)) {
       const end = input.indexOf("\n", index + 2);
+      output = output.slice(0, lineOutputStart);
       if (end === -1) break;
-      output += "\n";
       index = end;
+      lineOutputStart = output.length;
       continue;
     }
 
-    if (character === "/" && nextCharacter === "*") {
+    if (character === "/" && nextCharacter === "*" && isObviousJavaScriptBlockComment(input, index)) {
       const end = input.indexOf("*/", index + 2);
-      const commentEnd = end === -1 ? input.length : end + 2;
+      if (end === -1) {
+        output += character;
+        continue;
+      }
+      const commentEnd = end + 2;
       const comment = input.slice(index, commentEnd);
       output += comment.replace(/[^\r\n]/g, " ");
       index = commentEnd - 1;
       continue;
     }
 
-    if (character === "/" && isJavaScriptRegexStart(input, index)) {
-      const end = readJavaScriptRegex(input, index);
-      output += input.slice(index, end);
-      index = end - 1;
-      continue;
-    }
-
     output += character;
+    if (character === "\n") lineOutputStart = output.length;
   }
 
   return output.trim();
@@ -293,20 +293,22 @@ function isCssIdentifierCharacter(character: string): boolean {
   return /[A-Za-z0-9_\\-\\\\]/.test(character);
 }
 
-function isJavaScriptRegexStart(input: string, index: number): boolean {
-  let previous = index - 1;
-  while (previous >= 0 && /\s/.test(input[previous])) previous -= 1;
-  if (previous < 0) return true;
+function isStandaloneJavaScriptComment(input: string, index: number): boolean {
+  const lineStart = Math.max(input.lastIndexOf("\n", index - 1), input.lastIndexOf("\r", index - 1)) + 1;
+  return /^\s*$/.test(input.slice(lineStart, index));
+}
 
-  const character = input[previous];
-  // A slash after a closing parenthesis can begin a regex statement; preserve ambiguous expressions.
-  if (character === ")") return true;
-  if (!/[A-Za-z0-9_$\])]/.test(character)) return true;
-  if (!/[A-Za-z_$]/.test(character)) return false;
+function isObviousJavaScriptBlockComment(input: string, index: number): boolean {
+  const end = input.indexOf("*/", index + 2);
+  if (end === -1) return false;
+  const lineStart = Math.max(input.lastIndexOf("\n", index - 1), input.lastIndexOf("\r", index - 1)) + 1;
+  const lineBreak = input.slice(end + 2).search(/[\r\n]/);
+  const lineEnd = lineBreak === -1 ? input.length : end + 2 + lineBreak;
+  const before = input.slice(lineStart, index);
+  const after = input.slice(end + 2, lineEnd);
 
-  let wordStart = previous;
-  while (wordStart >= 0 && /[A-Za-z0-9_$]/.test(input[wordStart])) wordStart -= 1;
-  return /^(?:return|throw|case|delete|void|typeof|new|in|of|yield|await)$/.test(input.slice(wordStart + 1, previous + 1));
+  return /^\s*$/.test(before) && /^\s*$/.test(after)
+    || /;\s*$/.test(before) && /^\s*$/.test(after);
 }
 
 function readJavaScriptString(input: string, start: number, quote: string): number {
@@ -316,30 +318,6 @@ function readJavaScriptString(input: string, start: number, quote: string): numb
     else if (input[index++] === quote) break;
   }
   return index;
-}
-
-function readJavaScriptRegex(input: string, start: number): number {
-  let inCharacterClass = false;
-  let index = start + 1;
-  while (index < input.length) {
-    const character = input[index];
-    if (character === "\\") {
-      index += 2;
-    } else if (character === "[") {
-      inCharacterClass = true;
-      index += 1;
-    } else if (character === "]") {
-      inCharacterClass = false;
-      index += 1;
-    } else if (character === "/" && !inCharacterClass) {
-      index += 1;
-      while (/[A-Za-z]/.test(input[index] ?? "")) index += 1;
-      return index;
-    } else {
-      index += 1;
-    }
-  }
-  return input.length;
 }
 
 function compactWhitespace(input: string, removeAroundPunctuation: boolean): string {

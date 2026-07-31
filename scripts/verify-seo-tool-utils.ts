@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   contrastRatio,
+  cleanJavaScript,
   csvToJson,
   decodeHtmlEntities,
   decodeJwt,
@@ -10,7 +11,6 @@ import {
   jsonToCsv,
   jsonToTypescript,
   minifyCss,
-  minifyJavaScript,
   simpleYamlToJson,
   testRegex,
 } from "../src/lib/seo-tool-utils.ts";
@@ -50,13 +50,14 @@ assert.equal(decodeHtmlEntities("&lt;strong&gt;Hi&lt;/strong&gt;"), "<strong>Hi<
 assert.equal(minifyCss("/*x*/\n.card { color: red; }"), ".card{color:red}");
 assert.equal(minifyCss("a/* separator */b { color: red; }"), "a b{color:red}");
 assert.equal(minifyCss("a/* comment */\\62 { color: red; }"), "a \\62{color:red}");
-assert.equal(minifyJavaScript("// x\nconst a = 1;"), "const a = 1;");
-const asiSensitiveJavaScript = minifyJavaScript("function f(){ return\n1; }");
+assert.equal(cleanJavaScript("// x\nconst a = 1;"), "const a = 1;");
+const asiSensitiveJavaScript = cleanJavaScript("function f(){ return\n1; }");
 assert.equal(/return\s*\n\s*1/.test(asiSensitiveJavaScript), true);
 assert.equal(asiSensitiveJavaScript.includes("return 1"), false);
-assert.equal(minifyJavaScript("const slash = /[//]/;"), "const slash = /[//]/;");
-assert.equal(minifyJavaScript("if (ready) /[//]/.test(value);").includes("/[//]/"), true);
-assert.equal(minifyJavaScript("const ratio = total / count; /* remove me */"), "const ratio = total / count;");
+assert.equal(cleanJavaScript("const slash = /[//]/;"), "const slash = /[//]/;");
+assert.equal(cleanJavaScript("const matcher = /[/*]/;"), "const matcher = /[/*]/;");
+assert.equal(cleanJavaScript("const matcher = /[;/* comment */ ]/;"), "const matcher = /[;/* comment */ ]/;");
+assert.equal(cleanJavaScript("const ratio = total / count; /* remove me */"), "const ratio = total / count;");
 assert.equal(contrastRatio("#000000", "#ffffff"), 21);
 assert.equal(
   generateRobotsTxt({

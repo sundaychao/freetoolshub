@@ -73,3 +73,24 @@ The successful build prints non-blocking warnings about a typeless Node verifica
    - Escalated run exit code: 0.
    - Output: compiled successfully, TypeScript completed, and all 36 static pages generated.
    - Note: Next.js prints the existing multiple-lockfile workspace-root warning.
+
+## Approved Scope Change: JavaScript Comment & Whitespace Cleaner
+
+### Changes
+
+- Renamed the plan-facing JavaScript utility export from `minifyJavaScript` to `cleanJavaScript` and removed the former export.
+- Replaced regex/division classification with a conservative comment-only scanner. It removes standalone line comments and clearly bounded, closed block comments while preserving all other ambiguous slash-containing source.
+- Preserved line terminators affecting automatic semicolon insertion and retained CSS minifier behavior and its regression assertions.
+- Updated the Node verification script to import and test `cleanJavaScript`, including an ambiguous regex character-class case that must remain unchanged.
+
+### Verification
+
+1. `npm.cmd run verify:seo-tools`
+   - Exit code: 0
+   - Output: `seo tool utilities verified`
+   - Note: Node prints the existing typeless TypeScript module warning.
+2. `npm.cmd run build`
+   - Initial sandboxed attempt failed only while fetching the configured Google Font.
+   - Network-enabled retry exit code: 0.
+   - Output: compiled successfully, TypeScript completed, and all 36 static pages generated.
+   - Note: Next.js prints the existing multiple-lockfile workspace-root warning.
