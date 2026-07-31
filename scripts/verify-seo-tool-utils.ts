@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
   contrastRatio,
   cleanJavaScript,
@@ -75,5 +76,11 @@ assert.equal(
   }),
   "User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: https://sundaychaos.com/sitemap.xml\nHost: https://sundaychaos.com",
 );
+
+const textDiffChecker = readFileSync(new URL("../src/components/tools/TextDiffChecker.tsx", import.meta.url), "utf8");
+assert.match(textDiffChecker, /const MAX_DIFF_LINES = \d+;/);
+assert.match(textDiffChecker, /onClick=\{handleCompare\}/);
+assert.match(textDiffChecker, /lineCount\(left\) > MAX_DIFF_LINES \|\| lineCount\(right\) > MAX_DIFF_LINES/);
+assert.doesNotMatch(textDiffChecker, /useMemo\(/);
 
 console.log("seo tool utilities verified");
