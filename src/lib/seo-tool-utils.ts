@@ -226,7 +226,11 @@ function stripComments(input: string, lineComments: boolean): string {
       output += character;
     } else if (character === "/" && input[index + 1] === "*") {
       const end = input.indexOf("*/", index + 2);
-      index = end === -1 ? input.length : end + 1;
+      const commentEnd = end === -1 ? input.length : end + 2;
+      if (isCssIdentifierCharacter(input[index - 1] ?? "") && isCssIdentifierCharacter(input[commentEnd] ?? "")) {
+        output += " ";
+      }
+      index = commentEnd - 1;
     } else if (lineComments && character === "/" && input[index + 1] === "/") {
       const end = input.indexOf("\n", index + 2);
       index = end === -1 ? input.length : end;
@@ -272,10 +276,7 @@ export function minifyJavaScript(input: string): string {
       continue;
     }
 
-    // Treat every non-comment slash as a regex candidate. When its context is
-    // ambiguous with division, preserving too much is safer than stripping a
-    // comment-looking sequence inside a regular expression.
-    if (character === "/") {
+    if (character === "/" && isJavaScriptRegexStart(input, index)) {
       const end = readJavaScriptRegex(input, index);
       output += input.slice(index, end);
       index = end - 1;
@@ -286,6 +287,24 @@ export function minifyJavaScript(input: string): string {
   }
 
   return output.trim();
+}
+
+function isCssIdentifierCharacter(character: string): boolean {
+  return /[A-Za-z0-9_-]/.test(character);
+}
+
+function isJavaScriptRegexStart(input: string, index: number): boolean {
+  let previous = index - 1;
+  while (previous >= 0 && /\s/.test(input[previous])) previous -= 1;
+  if (previous < 0) return true;
+
+  const character = input[previous];
+  if (!/[A-Za-z0-9_$\])]/.test(character)) return true;
+  if (!/[A-Za-z_$]/.test(character)) return false;
+
+  let wordStart = previous;
+  while (wordStart >= 0 && /[A-Za-z0-9_$]/.test(input[wordStart])) wordStart -= 1;
+  return /^(?:return|throw|case|delete|void|typeof|new|in|of|yield|await)$/.test(input.slice(wordStart + 1, previous + 1));
 }
 
 function readJavaScriptString(input: string, start: number, quote: string): number {
