@@ -4,6 +4,16 @@ export type RegexMatch = {
   groups: string[];
 };
 
+export type RegexTestOptions = {
+  maxMatches?: number;
+};
+
+export type RegexTestResult = {
+  matches: RegexMatch[];
+  error?: string;
+  truncated?: boolean;
+};
+
 export type DiffLine = {
   type: "unchanged" | "added" | "removed";
   value: string;
@@ -55,12 +65,22 @@ export function decodeJwt(token: string): { header: unknown; payload: unknown; s
   };
 }
 
-export function testRegex(pattern: string, flags: string, text: string): { matches: RegexMatch[]; error?: string } {
+export function testRegex(
+  pattern: string,
+  flags: string,
+  text: string,
+  options: RegexTestOptions = {},
+): RegexTestResult {
   try {
-    const normalizedFlags = flags.replace(/y/g, "");
-    const regex = new RegExp(pattern, normalizedFlags.includes("g") ? normalizedFlags : `${normalizedFlags}g`);
+    if (pattern.length === 0) throw new Error("Pattern cannot be empty");
+    const maxMatches = options.maxMatches ?? 100;
+    if (!Number.isInteger(maxMatches) || maxMatches < 1) throw new Error("Maximum matches must be a positive integer");
+
+    const normalizedFlags = flags.includes("g") ? flags : `${flags}g`;
+    const regex = new RegExp(pattern, normalizedFlags);
     const matches: RegexMatch[] = [];
     for (const match of text.matchAll(regex)) {
+      if (matches.length === maxMatches) return { matches, truncated: true };
       matches.push({ match: match[0], index: match.index ?? 0, groups: match.slice(1).map((group) => group ?? "") });
     }
     return { matches };
@@ -138,8 +158,13 @@ export function csvToJson(input: string): Record<string, string>[] {
   return rows.map((row) => Object.fromEntries(headers.map((header, index) => [header, row[index] ?? ""])));
 }
 
-function csvCell(value: unknown): string {
-  const text = value == null ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
+export type JsonToCsvOptions = {
+  spreadsheetSafe?: boolean;
+};
+
+function csvCell(value: unknown, options: JsonToCsvOptions): string {
+  const rawText = value == null ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
+  const text = options.spreadsheetSafe && /^[=+\-@]/.test(rawText) ? `'${rawText}` : rawText;
   return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
@@ -149,12 +174,15 @@ export function isNonEmptyPlainObjectArray(input: unknown): input is Record<stri
     && input.every((item) => typeof item === "object" && item !== null && !Array.isArray(item));
 }
 
-export function jsonToCsv(input: unknown): string {
+export function jsonToCsv(input: unknown, options: JsonToCsvOptions = {}): string {
   if (!Array.isArray(input) || input.length === 0) return "";
   const records = input.filter((item): item is Record<string, unknown> => typeof item === "object" && item !== null && !Array.isArray(item));
   if (records.length === 0) return "";
   const headers = [...new Set(records.flatMap((record) => Object.keys(record)))];
-  return [headers.map(csvCell).join(","), ...records.map((record) => headers.map((header) => csvCell(record[header])).join(","))].join("\n");
+  return [
+    headers.map((header) => csvCell(header, options)).join(","),
+    ...records.map((record) => headers.map((header) => csvCell(record[header], options)).join(",")),
+  ].join("\n");
 }
 
 function parseYamlValue(value: string): unknown {
@@ -184,9 +212,33 @@ export function simpleYamlToJson(input: string): unknown {
 
 function typeForValue(value: unknown): string {
   if (value === null) return "null";
-  if (Array.isArray(value)) return value.length === 0 ? "unknown[]" : `${typeForValue(value[0])}[]`;
+  if (Array.isArray(value)) {
+    if (value.length === 0) return "unknown[]";
+    const elementTypes = typesForValues(value);
+    const elementType = elementTypes.join(" | ");
+    return elementTypes.length > 1 ? `(${elementType})[]` : `${elementType}[]`;
+  }
   if (typeof value === "object") return objectType(value as Record<string, unknown>);
   return typeof value;
+}
+
+function typesForValues(values: unknown[]): string[] {
+  const objectValues = values.filter(isPlainObject);
+  const types = objectValues.length > 0 ? [objectTypeFromSamples(objectValues)] : [];
+
+  for (const value of values) {
+    if (!isPlainObject(value)) types.push(typeForValue(value));
+  }
+
+  return [...new Set(types)];
+}
+
+function typeForValues(values: unknown[]): string {
+  return typesForValues(values).join(" | ") || "unknown";
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function propertyName(name: string): string {
@@ -194,9 +246,19 @@ function propertyName(name: string): string {
 }
 
 function objectType(value: Record<string, unknown>): string {
-  const entries = Object.entries(value);
-  if (entries.length === 0) return "Record<string, unknown>";
-  return `{ ${entries.map(([key, item]) => `${propertyName(key)}: ${typeForValue(item)};`).join(" ")} }`;
+  return objectTypeFromSamples([value]);
+}
+
+function objectTypeFromSamples(values: Record<string, unknown>[]): string {
+  const keys = [...new Set(values.flatMap((value) => Object.keys(value)))];
+  if (keys.length === 0) return "Record<string, unknown>";
+
+  const properties = keys.map((key) => {
+    const samples = values.filter((value) => Object.hasOwn(value, key)).map((value) => value[key]);
+    const optional = samples.length < values.length ? "?" : "";
+    return `${propertyName(key)}${optional}: ${typeForValues(samples)};`;
+  });
+  return `{ ${properties.join(" ")} }`;
 }
 
 export function jsonToTypescript(input: unknown, rootName = "Root"): string {
@@ -238,7 +300,7 @@ function stripComments(input: string, lineComments: boolean): string {
     } else if (character === "/" && input[index + 1] === "*") {
       const end = input.indexOf("*/", index + 2);
       const commentEnd = end === -1 ? input.length : end + 2;
-      output += " ";
+      if (cssCommentNeedsSeparator(output.at(-1), input[commentEnd])) output += " ";
       index = commentEnd - 1;
     } else if (lineComments && character === "/" && input[index + 1] === "/") {
       const end = input.indexOf("\n", index + 2);
@@ -248,6 +310,15 @@ function stripComments(input: string, lineComments: boolean): string {
     }
   }
   return output;
+}
+
+function cssCommentNeedsSeparator(before: string | undefined, after: string | undefined): boolean {
+  return isCssIdentifierCharacter(before) && isCssIdentifierCharacter(after);
+}
+
+function isCssIdentifierCharacter(character: string | undefined): boolean {
+  if (!character) return false;
+  return character === "\\" || /[A-Za-z0-9_-]/.test(character) || character.codePointAt(0)! >= 0x80;
 }
 
 function readCssUrl(input: string, start: number): number {

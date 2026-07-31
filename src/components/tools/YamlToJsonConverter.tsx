@@ -28,6 +28,7 @@ export function YamlToJsonConverter() {
         <label htmlFor="yaml-to-json-input" className="mb-2 block text-sm font-medium text-zinc-700">
           YAML input
         </label>
+        <p className="mb-2 text-xs text-zinc-500">Supports top-level key/value objects and simple lists only. Nested or indented YAML is not supported.</p>
         <textarea
           id="yaml-to-json-input"
           value={input}
