@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { minifyCss } from "@/lib/seo-tool-utils";
 
 const SAMPLE_CSS = `/* Card styles */
@@ -9,13 +9,33 @@ const SAMPLE_CSS = `/* Card styles */
   padding: 1rem;
   background: white;
 }`;
+const MAX_INPUT_CHARACTERS = 100_000;
 
 export function CssMinifier() {
   const [input, setInput] = useState(SAMPLE_CSS);
-  const output = useMemo(() => minifyCss(input), [input]);
+  const [output, setOutput] = useState(() => minifyCss(SAMPLE_CSS));
+  const inputTooLarge = input.length > MAX_INPUT_CHARACTERS;
+
+  function handleMinify() {
+    if (!inputTooLarge) setOutput(minifyCss(input));
+  }
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={handleMinify}
+          disabled={inputTooLarge}
+          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Minify CSS
+        </button>
+        <p className="text-sm text-zinc-600">
+          Minify up to {MAX_INPUT_CHARACTERS.toLocaleString()} characters at a time.
+          {inputTooLarge ? " Shorten the input before minifying." : ""}
+        </p>
+      </div>
       <div className="grid gap-6 lg:grid-cols-2">
         <div>
           <label htmlFor="css-minifier-input" className="mb-2 block text-sm font-medium text-zinc-700">

@@ -319,7 +319,29 @@ export function cleanJavaScript(input: string): string {
     if (character === "\n") lineOutputStart = output.length;
   }
 
-  return output.trim();
+  return normalizeJavaScriptWhitespace(output);
+}
+
+function normalizeJavaScriptWhitespace(input: string): string {
+  const lineEnding = input.includes("\r\n") ? "\r\n" : "\n";
+  const lines = input.split(/\r?\n/).map((line) => line.replace(/[ \t]+$/g, ""));
+
+  while (lines[0]?.trim() === "") lines.shift();
+  while (lines.at(-1)?.trim() === "") lines.pop();
+
+  const normalizedLines: string[] = [];
+  let blankLineCount = 0;
+  for (const line of lines) {
+    if (line.trim() === "") {
+      blankLineCount += 1;
+      if (blankLineCount <= 2) normalizedLines.push("");
+    } else {
+      blankLineCount = 0;
+      normalizedLines.push(line);
+    }
+  }
+
+  return normalizedLines.join(lineEnding);
 }
 
 function isStandaloneJavaScriptComment(input: string, index: number): boolean {

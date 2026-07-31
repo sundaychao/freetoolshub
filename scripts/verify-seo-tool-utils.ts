@@ -63,6 +63,10 @@ assert.equal(minifyCss("a{background:url(foo/*keep*/bar)}"), "a{background:url(f
 assert.equal(minifyCss("a{background:url(foo\\)bar/*keep*/baz)}"), "a{background:url(foo\\)bar/*keep*/baz)}");
 assert.equal(minifyCss("a/*comment*/é{color:red}"), "a é{color:red}");
 assert.equal(cleanJavaScript("// x\nconst a = 1;"), "const a = 1;");
+assert.equal(
+  cleanJavaScript("\n\nconst a = 1;  \t\n\n\n\nconst b = 2;\t \n\n"),
+  "const a = 1;\n\n\nconst b = 2;",
+);
 const asiSensitiveJavaScript = cleanJavaScript("function f(){ return\n1; }");
 assert.equal(/return\s*\n\s*1/.test(asiSensitiveJavaScript), true);
 assert.equal(asiSensitiveJavaScript.includes("return 1"), false);
@@ -87,5 +91,13 @@ assert.match(textDiffChecker, /const MAX_DIFF_LINES = \d+;/);
 assert.match(textDiffChecker, /onClick=\{handleCompare\}/);
 assert.match(textDiffChecker, /lineCount\(left\) > MAX_DIFF_LINES \|\| lineCount\(right\) > MAX_DIFF_LINES/);
 assert.doesNotMatch(textDiffChecker, /useMemo\(/);
+
+const cssMinifier = readFileSync(new URL("../src/components/tools/CssMinifier.tsx", import.meta.url), "utf8");
+const javascriptCleaner = readFileSync(new URL("../src/components/tools/JavaScriptCleaner.tsx", import.meta.url), "utf8");
+for (const toolComponent of [cssMinifier, javascriptCleaner]) {
+  assert.match(toolComponent, /const MAX_INPUT_CHARACTERS = 100_000;/);
+  assert.match(toolComponent, /onClick=\{handle(?:Minify|Clean)\}/);
+  assert.doesNotMatch(toolComponent, /useMemo\(/);
+}
 
 console.log("seo tool utilities verified");
