@@ -113,3 +113,22 @@ The successful build prints non-blocking warnings about a typeless Node verifica
    - Network-enabled retry exit code: 0.
    - Output: compiled successfully, TypeScript completed, and all 36 static pages generated.
    - Note: Next.js prints the existing multiple-lockfile workspace-root warning.
+
+## Task 1 CSS Utility Edge Cases
+
+### Changes
+
+- Updated the CSS URL scanner to skip escaped characters while reading unquoted `url(...)` values, preserving comment-like text after an escaped closing parenthesis.
+- Treated non-ASCII characters as identifier-like when removing CSS comments so selector tokens cannot merge.
+- Added regression assertions for `url(foo\\)bar/*keep*/baz)` and `a/*comment*/é{color:red}`.
+
+### Verification
+
+1. `npm.cmd run verify:seo-tools`
+   - Exit code: 0.
+   - Output: `seo tool utilities verified`.
+2. `npm.cmd run build`
+   - Initial sandboxed run could not fetch the configured Google Font.
+   - Network-enabled retry exit code: 0.
+   - Output: compiled successfully, TypeScript completed, and all 36 static pages generated.
+   - Note: Next.js prints the existing multiple-lockfile workspace-root warning.

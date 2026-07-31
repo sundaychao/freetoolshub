@@ -255,6 +255,8 @@ function readCssUrl(input: string, start: number): number {
     if (quote) {
       if (character === "\\") index += 1;
       else if (character === quote) quote = "";
+    } else if (character === "\\") {
+      index += 1;
     } else if (character === '"' || character === "'") {
       quote = character;
     } else if (character === "(") {
@@ -317,7 +319,7 @@ export function cleanJavaScript(input: string): string {
 }
 
 function isCssIdentifierCharacter(character: string): boolean {
-  return /[A-Za-z0-9_\\-\\\\]/.test(character);
+  return /[A-Za-z0-9_\\-\\\\]/.test(character) || /[^\0-\x7F]/.test(character);
 }
 
 function isStandaloneJavaScriptComment(input: string, index: number): boolean {
