@@ -164,7 +164,7 @@ export type JsonToCsvOptions = {
 
 function csvCell(value: unknown, options: JsonToCsvOptions): string {
   const rawText = value == null ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
-  const text = options.spreadsheetSafe && /^[=+\-@]/.test(rawText) ? `'${rawText}` : rawText;
+  const text = options.spreadsheetSafe && /^[=+\-@\t\r]/.test(rawText) ? `'${rawText}` : rawText;
   return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
@@ -487,7 +487,8 @@ function compactWhitespace(input: string, removeAroundPunctuation: boolean): str
       pendingWhitespace = output.length > 0;
       continue;
     }
-    if (pendingWhitespace && !(removeAroundPunctuation && /[{}:;,>]/.test(character)) && !(removeAroundPunctuation && /[{}:;,>]/.test(output.at(-1) ?? ""))) {
+    const punctuationAfterWhitespace = /[{};,>]/.test(character);
+    if (pendingWhitespace && !(removeAroundPunctuation && punctuationAfterWhitespace) && !(removeAroundPunctuation && /[{}:;,>]/.test(output.at(-1) ?? ""))) {
       output += " ";
     }
     pendingWhitespace = false;
@@ -513,7 +514,7 @@ function luminance(color: string): number {
 
 export function contrastRatio(foreground: string, background: string): number {
   const [lighter, darker] = [luminance(foreground), luminance(background)].sort((left, right) => right - left);
-  return Number(((lighter + 0.05) / (darker + 0.05)).toFixed(2));
+  return (lighter + 0.05) / (darker + 0.05);
 }
 
 export function generateRobotsTxt(options: RobotsOptions): string {

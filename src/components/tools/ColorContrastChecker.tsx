@@ -21,6 +21,7 @@ export function ColorContrastChecker() {
   const aaLargePasses = result.ratio !== null && result.ratio >= 3;
   const aaaNormalPasses = result.ratio !== null && result.ratio >= 7;
   const aaaLargePasses = result.ratio !== null && result.ratio >= 4.5;
+  const displayRatio = result.ratio === null ? null : result.ratio.toFixed(2);
 
   return (
     <div className="space-y-6">
@@ -50,7 +51,7 @@ export function ColorContrastChecker() {
             <p className="mt-2 text-sm">This preview uses your selected foreground and background colors.</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <p className="rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700">Ratio: <strong className="font-mono text-zinc-900">{result.ratio}:1</strong></p>
+            <p className="rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700">Ratio: <strong className="font-mono text-zinc-900">{displayRatio}:1</strong></p>
             <p className="rounded-md border border-zinc-200 px-3 py-2 text-sm text-zinc-700">AA normal: <strong className={aaNormalPasses ? "text-emerald-700" : "text-red-700"}>{aaNormalPasses ? "Pass" : "Fail"}</strong></p>
             <p className="rounded-md border border-zinc-200 px-3 py-2 text-sm text-zinc-700">AAA normal: <strong className={aaaNormalPasses ? "text-emerald-700" : "text-red-700"}>{aaaNormalPasses ? "Pass" : "Fail"}</strong></p>
             <p className="rounded-md border border-zinc-200 px-3 py-2 text-sm text-zinc-700">Large text: <strong className={aaaLargePasses ? "text-emerald-700" : aaLargePasses ? "text-amber-700" : "text-red-700"}>{aaaLargePasses ? "AAA Pass" : aaLargePasses ? "AA Pass" : "Fail"}</strong></p>

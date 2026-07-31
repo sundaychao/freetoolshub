@@ -51,7 +51,15 @@ assert.equal(
   ),
   "value\n'=1+1\n'+cmd\n'-1\n'@name",
 );
+assert.equal(
+  jsonToCsv([{ value: "\t=1+1" }, { value: "\r=1+1" }], { spreadsheetSafe: true }),
+  "value\n'\t=1+1\n\"'\r=1+1\"",
+);
 assert.equal(jsonToCsv([{ value: "=1+1" }]), "value\n=1+1");
+assert.equal(
+  jsonToCsv([{ value: "\t=1+1" }, { value: "\r=1+1" }]),
+  "value\n\t=1+1\n\"\r=1+1\"",
+);
 assert.equal(isNonEmptyPlainObjectArray({ name: "Jane" }), false);
 assert.equal(isNonEmptyPlainObjectArray([]), false);
 assert.equal(isNonEmptyPlainObjectArray([1]), false);
@@ -77,6 +85,8 @@ assert.equal(decodeHtmlEntities("&lt;strong&gt;Hi&lt;/strong&gt;"), "<strong>Hi<
 assert.equal(decodeHtmlEntities("&#X41;"), "A");
 
 assert.equal(minifyCss("/*x*/\n.card { color: red; }"), ".card{color:red}");
+assert.equal(minifyCss("nav :hover { color: red; }"), "nav :hover{color:red}");
+assert.equal(minifyCss("nav /* comment */:hover { color: red; }"), "nav :hover{color:red}");
 assert.equal(minifyCss("a/* separator */b { color: red; }"), "a b{color:red}");
 assert.equal(minifyCss("a/*c*/.child{color:red}"), "a.child{color:red}");
 assert.equal(minifyCss("a/*c*/#state{color:red}"), "a#state{color:red}");
@@ -99,6 +109,7 @@ assert.equal(cleanJavaScript("const matcher = /[/*]/;"), "const matcher = /[/*]/
 assert.equal(cleanJavaScript("const matcher = /[;/* comment */ ]/;"), "const matcher = /[;/* comment */ ]/;");
 assert.equal(cleanJavaScript("const ratio = total / count; /* remove me */"), "const ratio = total / count;");
 assert.equal(contrastRatio("#000000", "#ffffff"), 21);
+assert.equal(contrastRatio("#070707", "#777777") < 4.5, true);
 assert.equal(
   generateRobotsTxt({
     userAgent: "*",
