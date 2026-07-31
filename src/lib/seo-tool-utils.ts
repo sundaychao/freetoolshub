@@ -57,7 +57,8 @@ export function decodeJwt(token: string): { header: unknown; payload: unknown; s
 
 export function testRegex(pattern: string, flags: string, text: string): { matches: RegexMatch[]; error?: string } {
   try {
-    const regex = new RegExp(pattern, flags.includes("g") ? flags : `${flags}g`);
+    const normalizedFlags = flags.replace(/y/g, "");
+    const regex = new RegExp(pattern, normalizedFlags.includes("g") ? normalizedFlags : `${normalizedFlags}g`);
     const matches: RegexMatch[] = [];
     for (const match of text.matchAll(regex)) {
       matches.push({ match: match[0], index: match.index ?? 0, groups: match.slice(1).map((group) => group ?? "") });
@@ -224,6 +225,10 @@ function stripComments(input: string, lineComments: boolean): string {
     } else if (character === '"' || character === "'" || character === "`") {
       quote = character;
       output += character;
+    } else if (input.slice(index, index + 4).toLowerCase() === "url(") {
+      const end = readCssUrl(input, index);
+      output += input.slice(index, end);
+      index = end - 1;
     } else if (character === "/" && input[index + 1] === "*") {
       const end = input.indexOf("*/", index + 2);
       const commentEnd = end === -1 ? input.length : end + 2;
@@ -239,6 +244,28 @@ function stripComments(input: string, lineComments: boolean): string {
     }
   }
   return output;
+}
+
+function readCssUrl(input: string, start: number): number {
+  let depth = 0;
+  let quote = "";
+
+  for (let index = start + 3; index < input.length; index += 1) {
+    const character = input[index];
+    if (quote) {
+      if (character === "\\") index += 1;
+      else if (character === quote) quote = "";
+    } else if (character === '"' || character === "'") {
+      quote = character;
+    } else if (character === "(") {
+      depth += 1;
+    } else if (character === ")") {
+      depth -= 1;
+      if (depth === 0) return index + 1;
+    }
+  }
+
+  return input.length;
 }
 
 export function minifyCss(input: string): string {

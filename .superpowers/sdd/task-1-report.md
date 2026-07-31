@@ -94,3 +94,22 @@ The successful build prints non-blocking warnings about a typeless Node verifica
    - Network-enabled retry exit code: 0.
    - Output: compiled successfully, TypeScript completed, and all 36 static pages generated.
    - Note: Next.js prints the existing multiple-lockfile workspace-root warning.
+
+## Final Review Fix: Sticky Regex Flags and CSS URLs
+
+### Changes
+
+- Removed the sticky `y` flag before forcing global matching in `testRegex`, allowing a pattern supplied with `y` to find all global matches.
+- Preserved complete `url(...)` tokens while scanning CSS comments, including comment-like text within unquoted URL values.
+- Added focused regression assertions for both reviewed cases.
+
+### Verification
+
+1. `npm.cmd run verify:seo-tools`
+   - Exit code: 0.
+   - Output: `seo tool utilities verified`.
+2. `npm.cmd run build`
+   - Initial sandboxed attempt failed only because the configured Google Font could not be fetched.
+   - Network-enabled retry exit code: 0.
+   - Output: compiled successfully, TypeScript completed, and all 36 static pages generated.
+   - Note: Next.js prints the existing multiple-lockfile workspace-root warning.

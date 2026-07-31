@@ -20,6 +20,7 @@ const token =
 assert.deepEqual(decodeJwt(token).payload, { sub: "123", name: "Jane" });
 
 assert.equal(testRegex("(foo)", "gi", "Foo bar foo").matches.length, 2);
+assert.equal(testRegex("foo", "y", "xfoo foo").matches.length, 2);
 assert.equal(testRegex("(", "", "x").error?.includes("Invalid"), true);
 
 assert.deepEqual(diffLines("a\nb", "a\nc").map((line) => line.type), [
@@ -50,6 +51,7 @@ assert.equal(decodeHtmlEntities("&lt;strong&gt;Hi&lt;/strong&gt;"), "<strong>Hi<
 assert.equal(minifyCss("/*x*/\n.card { color: red; }"), ".card{color:red}");
 assert.equal(minifyCss("a/* separator */b { color: red; }"), "a b{color:red}");
 assert.equal(minifyCss("a/* comment */\\62 { color: red; }"), "a \\62{color:red}");
+assert.equal(minifyCss("a{background:url(foo/*keep*/bar)}"), "a{background:url(foo/*keep*/bar)}");
 assert.equal(cleanJavaScript("// x\nconst a = 1;"), "const a = 1;");
 const asiSensitiveJavaScript = cleanJavaScript("function f(){ return\n1; }");
 assert.equal(/return\s*\n\s*1/.test(asiSensitiveJavaScript), true);
