@@ -25,6 +25,10 @@ import { CsvToJsonConverter } from "@/components/tools/CsvToJsonConverter";
 import { JsonToCsvConverter } from "@/components/tools/JsonToCsvConverter";
 import { YamlToJsonConverter } from "@/components/tools/YamlToJsonConverter";
 import { JsonToTypescriptConverter } from "@/components/tools/JsonToTypescriptConverter";
+import { CssMinifier } from "@/components/tools/CssMinifier";
+import { JavaScriptCleaner } from "@/components/tools/JavaScriptCleaner";
+import { ColorContrastChecker } from "@/components/tools/ColorContrastChecker";
+import { RobotsTxtGenerator } from "@/components/tools/RobotsTxtGenerator";
 import { getToolBySlug, implementedTools, tools } from "@/lib/tools";
 import { getToolJsonLd } from "@/lib/jsonld";
 
@@ -52,6 +56,10 @@ const toolComponents: Record<string, React.ComponentType> = {
   "json-to-csv": JsonToCsvConverter,
   "yaml-to-json": YamlToJsonConverter,
   "json-to-typescript": JsonToTypescriptConverter,
+  "css-minifier": CssMinifier,
+  "javascript-cleaner": JavaScriptCleaner,
+  "color-contrast-checker": ColorContrastChecker,
+  "robots-txt-generator": RobotsTxtGenerator,
 };
 
 // 为所有工具预生成静态路由

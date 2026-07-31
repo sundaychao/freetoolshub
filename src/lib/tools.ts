@@ -181,6 +181,34 @@ export const tools: Tool[] = [
     category: "Web",
     icon: "TS",
   },
+  {
+    slug: "css-minifier",
+    title: "CSS Minifier",
+    description: "Minify CSS locally in your browser and compare the original and compressed character counts.",
+    category: "Web",
+    icon: "CSS",
+  },
+  {
+    slug: "javascript-cleaner",
+    title: "JavaScript Cleaner",
+    description: "Remove comments and unnecessary whitespace from JavaScript locally with a conservative cleanup utility.",
+    category: "Web",
+    icon: "JS",
+  },
+  {
+    slug: "color-contrast-checker",
+    title: "Color Contrast Checker",
+    description: "Check foreground and background color contrast against WCAG AA and AAA accessibility thresholds.",
+    category: "Design",
+    icon: "AA",
+  },
+  {
+    slug: "robots-txt-generator",
+    title: "Robots.txt Generator",
+    description: "Generate a robots.txt file with crawler rules, sitemap, and host directives in your browser.",
+    category: "SEO",
+    icon: "ROB",
+  },
 ];
 
 // 标记为“已实现”的工具 slug 集合，用于在工具详情页决定渲染真实交互组件
@@ -207,6 +235,10 @@ export const implementedTools = new Set<string>([
   "json-to-csv",
   "yaml-to-json",
   "json-to-typescript",
+  "css-minifier",
+  "javascript-cleaner",
+  "color-contrast-checker",
+  "robots-txt-generator",
 ]);
 
 export function getToolBySlug(slug: string): Tool | undefined {
