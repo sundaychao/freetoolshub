@@ -20,6 +20,9 @@
 # local worktrees
 /.worktrees/
 
+# local Codex/Superpowers coordination artifacts
+/.superpowers/
+
 # production
 /build
 
