@@ -121,6 +121,38 @@ export const tools: Tool[] = [
     category: "Data",
     icon: "↔",
   },
+  {
+    slug: "jwt-decoder",
+    title: "JWT Decoder",
+    description:
+      "Decode JWT headers and payloads locally in your browser without sending tokens to a server.",
+    category: "Security",
+    icon: "JWT",
+  },
+  {
+    slug: "regex-tester",
+    title: "Regex Tester",
+    description:
+      "Test regular expressions against text locally in your browser and inspect every match and capture group.",
+    category: "Web",
+    icon: ".*",
+  },
+  {
+    slug: "text-diff-checker",
+    title: "Text Diff Checker",
+    description:
+      "Compare two blocks of text locally in your browser and review added, removed, and unchanged lines.",
+    category: "Text",
+    icon: "DIFF",
+  },
+  {
+    slug: "html-entity-encoder",
+    title: "HTML Entity Encoder",
+    description:
+      "Encode or decode HTML entities locally in your browser for safer markup and readable text.",
+    category: "Web",
+    icon: "&;",
+  },
 ];
 
 // 标记为“已实现”的工具 slug 集合，用于在工具详情页决定渲染真实交互组件
@@ -139,6 +171,10 @@ export const implementedTools = new Set<string>([
   "timestamp-converter",
   "lorem-ipsum",
   "unit-converter",
+  "jwt-decoder",
+  "regex-tester",
+  "text-diff-checker",
+  "html-entity-encoder",
 ]);
 
 export function getToolBySlug(slug: string): Tool | undefined {

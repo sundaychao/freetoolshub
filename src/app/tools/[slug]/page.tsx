@@ -17,6 +17,10 @@ import { QrGenerator } from "@/components/tools/QrGenerator";
 import { TimestampConverter } from "@/components/tools/TimestampConverter";
 import { LoremIpsum } from "@/components/tools/LoremIpsum";
 import { UnitConverter } from "@/components/tools/UnitConverter";
+import { JwtDecoder } from "@/components/tools/JwtDecoder";
+import { RegexTester } from "@/components/tools/RegexTester";
+import { TextDiffChecker } from "@/components/tools/TextDiffChecker";
+import { HtmlEntityEncoder } from "@/components/tools/HtmlEntityEncoder";
 import { getToolBySlug, implementedTools, tools } from "@/lib/tools";
 import { getToolJsonLd } from "@/lib/jsonld";
 
@@ -36,6 +40,10 @@ const toolComponents: Record<string, React.ComponentType> = {
   "timestamp-converter": TimestampConverter,
   "lorem-ipsum": LoremIpsum,
   "unit-converter": UnitConverter,
+  "jwt-decoder": JwtDecoder,
+  "regex-tester": RegexTester,
+  "text-diff-checker": TextDiffChecker,
+  "html-entity-encoder": HtmlEntityEncoder,
 };
 
 // 为所有工具预生成静态路由
