@@ -143,6 +143,12 @@ function csvCell(value: unknown): string {
   return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
+export function isNonEmptyPlainObjectArray(input: unknown): input is Record<string, unknown>[] {
+  return Array.isArray(input)
+    && input.length > 0
+    && input.every((item) => typeof item === "object" && item !== null && !Array.isArray(item));
+}
+
 export function jsonToCsv(input: unknown): string {
   if (!Array.isArray(input) || input.length === 0) return "";
   const records = input.filter((item): item is Record<string, unknown> => typeof item === "object" && item !== null && !Array.isArray(item));

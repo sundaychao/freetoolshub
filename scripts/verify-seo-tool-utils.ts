@@ -9,6 +9,7 @@ import {
   diffLines,
   encodeHtmlEntities,
   generateRobotsTxt,
+  isNonEmptyPlainObjectArray,
   jsonToCsv,
   jsonToTypescript,
   minifyCss,
@@ -34,6 +35,10 @@ assert.deepEqual(csvToJson('name,role\n"Jane, Q",dev'), [
   { name: "Jane, Q", role: "dev" },
 ]);
 assert.equal(jsonToCsv([{ name: "Jane, Q", role: "dev" }]), 'name,role\n"Jane, Q",dev');
+assert.equal(isNonEmptyPlainObjectArray({ name: "Jane" }), false);
+assert.equal(isNonEmptyPlainObjectArray([]), false);
+assert.equal(isNonEmptyPlainObjectArray([1]), false);
+assert.equal(isNonEmptyPlainObjectArray([{ name: "Jane" }]), true);
 
 assert.deepEqual(simpleYamlToJson("name: Jane\nenabled: true\ncount: 3"), {
   name: "Jane",
