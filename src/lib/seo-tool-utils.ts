@@ -281,6 +281,19 @@ export function minifyCss(input: string): string {
 export function cleanJavaScript(input: string): string {
   let output = "";
   let lineOutputStart = 0;
+  let outputLine = 0;
+  const literalLines = new Set<number>();
+
+  const append = (value: string, isLiteral = false) => {
+    if (isLiteral) literalLines.add(outputLine);
+    for (const character of value) {
+      if (character === "\n") {
+        outputLine += 1;
+        if (isLiteral) literalLines.add(outputLine);
+      }
+    }
+    output += value;
+  };
 
   for (let index = 0; index < input.length; index += 1) {
     const character = input[index];
@@ -288,7 +301,7 @@ export function cleanJavaScript(input: string): string {
 
     if (character === "\"" || character === "'" || character === "`") {
       const end = readJavaScriptString(input, index, character);
-      output += input.slice(index, end);
+      append(input.slice(index, end), true);
       index = end - 1;
       continue;
     }
@@ -310,34 +323,40 @@ export function cleanJavaScript(input: string): string {
       }
       const commentEnd = end + 2;
       const comment = input.slice(index, commentEnd);
-      output += comment.replace(/[^\r\n]/g, " ");
+      append(comment.replace(/[^\r\n]/g, " "));
       index = commentEnd - 1;
       continue;
     }
 
-    output += character;
+    append(character);
     if (character === "\n") lineOutputStart = output.length;
   }
 
-  return normalizeJavaScriptWhitespace(output);
+  return normalizeJavaScriptWhitespace(output, literalLines);
 }
 
-function normalizeJavaScriptWhitespace(input: string): string {
+function normalizeJavaScriptWhitespace(input: string, literalLines: Set<number>): string {
   const lineEnding = input.includes("\r\n") ? "\r\n" : "\n";
-  const lines = input.split(/\r?\n/).map((line) => line.replace(/[ \t]+$/g, ""));
+  const lines = input.split(/\r?\n/).map((line, index) => ({
+    value: literalLines.has(index) ? line : line.replace(/[ \t]+$/g, ""),
+    hasLiteral: literalLines.has(index),
+  }));
 
-  while (lines[0]?.trim() === "") lines.shift();
-  while (lines.at(-1)?.trim() === "") lines.pop();
+  while (lines[0] && !lines[0].hasLiteral && lines[0].value.trim() === "") lines.shift();
+  while (lines.at(-1) && !lines.at(-1)?.hasLiteral && lines.at(-1)?.value.trim() === "") lines.pop();
 
   const normalizedLines: string[] = [];
   let blankLineCount = 0;
   for (const line of lines) {
-    if (line.trim() === "") {
+    if (line.hasLiteral) {
+      blankLineCount = 0;
+      normalizedLines.push(line.value);
+    } else if (line.value.trim() === "") {
       blankLineCount += 1;
       if (blankLineCount <= 2) normalizedLines.push("");
     } else {
       blankLineCount = 0;
-      normalizedLines.push(line);
+      normalizedLines.push(line.value);
     }
   }
 

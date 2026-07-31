@@ -41,3 +41,21 @@ Status: DONE
 ### Concerns
 
 - The existing Next.js multiple-lockfile workspace-root warning remains unrelated to this fix.
+
+## Second Review Fix
+
+Status: DONE
+
+### Changed files
+
+- `src/lib/seo-tool-utils.ts`: tracks physical lines containing JavaScript literals so whitespace normalization does not trim or collapse template literal content.
+- `scripts/verify-seo-tool-utils.ts`: adds regression coverage for trailing spaces and blank lines in multiline template literals.
+
+### Verification
+
+- `npm.cmd run verify:seo-tools`: passed (`seo tool utilities verified`).
+- `npm.cmd run build`: passed after the sandbox-only Google Fonts fetch failure. TypeScript completed and 48 static pages were generated.
+
+### Concerns
+
+- The existing Next.js multiple-lockfile workspace-root warning remains unrelated to this fix.

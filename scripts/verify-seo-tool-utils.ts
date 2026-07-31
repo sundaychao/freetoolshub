@@ -70,6 +70,8 @@ assert.equal(
 const asiSensitiveJavaScript = cleanJavaScript("function f(){ return\n1; }");
 assert.equal(/return\s*\n\s*1/.test(asiSensitiveJavaScript), true);
 assert.equal(asiSensitiveJavaScript.includes("return 1"), false);
+const multilineTemplateLiteral = "const message = `first line  \n\nthird line  \n`;";
+assert.equal(cleanJavaScript(multilineTemplateLiteral), multilineTemplateLiteral);
 assert.equal(cleanJavaScript("const slash = /[//]/;"), "const slash = /[//]/;");
 assert.equal(cleanJavaScript("const matcher = /[/*]/;"), "const matcher = /[/*]/;");
 assert.equal(cleanJavaScript("const matcher = /[;/* comment */ ]/;"), "const matcher = /[;/* comment */ ]/;");
