@@ -47,9 +47,11 @@ assert.equal(
 
 assert.equal(encodeHtmlEntities('<a href="x">'), "&lt;a href=&quot;x&quot;&gt;");
 assert.equal(decodeHtmlEntities("&lt;strong&gt;Hi&lt;/strong&gt;"), "<strong>Hi</strong>");
+assert.equal(decodeHtmlEntities("&#X41;"), "A");
 
 assert.equal(minifyCss("/*x*/\n.card { color: red; }"), ".card{color:red}");
 assert.equal(minifyCss("a/* separator */b { color: red; }"), "a b{color:red}");
+assert.equal(minifyCss("a/*c*/.child{color:red}"), "a .child{color:red}");
 assert.equal(minifyCss("a/* comment */\\62 { color: red; }"), "a \\62{color:red}");
 assert.equal(minifyCss("a{background:url(foo/*keep*/bar)}"), "a{background:url(foo/*keep*/bar)}");
 assert.equal(minifyCss("a{background:url(foo\\)bar/*keep*/baz)}"), "a{background:url(foo\\)bar/*keep*/baz)}");

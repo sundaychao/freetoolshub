@@ -132,3 +132,25 @@ The successful build prints non-blocking warnings about a typeless Node verifica
    - Network-enabled retry exit code: 0.
    - Output: compiled successfully, TypeScript completed, and all 36 static pages generated.
    - Note: Next.js prints the existing multiple-lockfile workspace-root warning.
+
+## Final Utility Edge Cases
+
+### Changes
+
+- Made hexadecimal numeric HTML entity detection case-insensitive so `&#X41;` decodes to `A`.
+- Replaced each CSS block comment outside strings and `url(...)` with a space before whitespace compaction, preserving selector-token boundaries such as `a/*c*/.child`.
+- Added regression assertions for both cases while retaining all existing assertions.
+
+### Verification
+
+1. `npm.cmd run verify:seo-tools`
+   - Exit code: 0.
+   - Output: `seo tool utilities verified`.
+2. `npm.cmd run build`
+   - Exit code: 1.
+   - Blocked while Next.js attempted to fetch the configured `Inter` font from `https://fonts.googleapis.com`.
+   - The utility verifier completed successfully before the build failed; Next.js also printed its existing multiple-lockfile workspace-root warning.
+3. `npm.cmd run build` (network-enabled retry)
+   - Exit code: 0.
+   - Output: compiled successfully, TypeScript completed, and all 36 static pages generated.
+   - Note: Next.js prints the existing multiple-lockfile workspace-root warning.

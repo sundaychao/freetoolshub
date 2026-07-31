@@ -207,7 +207,7 @@ export function encodeHtmlEntities(input: string): string {
 
 export function decodeHtmlEntities(input: string): string {
   return input.replace(/&(#x[\da-f]+|#\d+|[a-z]+);/gi, (entity, value: string) => {
-    if (value.startsWith("#x")) return String.fromCodePoint(Number.parseInt(value.slice(2), 16));
+    if (value.toLowerCase().startsWith("#x")) return String.fromCodePoint(Number.parseInt(value.slice(2), 16));
     if (value.startsWith("#")) return String.fromCodePoint(Number.parseInt(value.slice(1), 10));
     return htmlEntities[value.toLowerCase()] ?? entity;
   });
@@ -232,9 +232,7 @@ function stripComments(input: string, lineComments: boolean): string {
     } else if (character === "/" && input[index + 1] === "*") {
       const end = input.indexOf("*/", index + 2);
       const commentEnd = end === -1 ? input.length : end + 2;
-      if (isCssIdentifierCharacter(input[index - 1] ?? "") && isCssIdentifierCharacter(input[commentEnd] ?? "")) {
-        output += " ";
-      }
+      output += " ";
       index = commentEnd - 1;
     } else if (lineComments && character === "/" && input[index + 1] === "/") {
       const end = input.indexOf("\n", index + 2);
@@ -316,10 +314,6 @@ export function cleanJavaScript(input: string): string {
   }
 
   return output.trim();
-}
-
-function isCssIdentifierCharacter(character: string): boolean {
-  return /[A-Za-z0-9_\\-\\\\]/.test(character) || /[^\0-\x7F]/.test(character);
 }
 
 function isStandaloneJavaScriptComment(input: string, index: number): boolean {
